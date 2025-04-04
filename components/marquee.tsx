@@ -1,42 +1,88 @@
-import * as React from "react"
-import { cn } from "../lib/utils"
+"use client"
 
-interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
-  pauseOnHover?: boolean
-  direction?: "left" | "right"
-  speed?: number
+import { useEffect, useMemo, useState } from "react"
+import { useTheme } from "next-themes"
+import {
+  Cloud,
+  fetchSimpleIcons,
+  ICloud,
+  renderSimpleIcon,
+  SimpleIcon,
+} from "react-icon-cloud"
+
+export const cloudProps: Omit<ICloud, "children"> = {
+  containerProps: {
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      paddingTop: 40,
+    },
+  },
+  options: {
+    reverse: true,
+    depth: 1,
+    wheelZoom: false,
+    imageScale: 3,
+    activeCursor: "default",
+    tooltip: "native",
+    initial: [0.1, -0.1],
+    clickToFront: 500,
+    tooltipDelay: 0,
+    outlineColour: "#0000",
+    maxSpeed: 0.04,
+    minSpeed: 0.02,
+    // dragControl: false,
+  },
 }
 
-export function Marquee({
-  children,
-  pauseOnHover = false,
-  direction = "left",
-  speed = 30,
-  className,
-  ...props
-}: MarqueeProps) {
+export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
+  const bgHex = theme === "light" ? "#f3f2ef" : "#080510"
+  const fallbackHex = theme === "light" ? "#6e6e73" : "#ffffff"
+  const minContrastRatio = theme === "dark" ? 2 : 1.2
+
+  return renderSimpleIcon({
+    icon,
+    bgHex,
+    fallbackHex,
+    minContrastRatio,
+    size: 42,
+    aProps: {
+      href: undefined,
+      target: undefined,
+      rel: undefined,
+      onClick: (e: any) => e.preventDefault(),
+    },
+  })
+}
+
+export type DynamicCloudProps = {
+  iconSlugs: string[]
+}
+
+type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>
+
+export function IconCloud({ iconSlugs }: DynamicCloudProps) {
+  const [data, setData] = useState<IconData | null>(null)
+  const { theme } = useTheme()
+
+  useEffect(() => {
+    fetchSimpleIcons({ slugs: iconSlugs }).then(setData)
+  }, [iconSlugs])
+
+  const renderedIcons = useMemo(() => {
+    if (!data) return null
+
+    return Object.values(data.simpleIcons).map((icon) =>
+      renderCustomIcon(icon, theme || "light"),
+    )
+  }, [data, theme])
+
   return (
-    <div 
-      className={cn(
-        "w-full overflow-hidden sm:mt-24 mt-10 z-10 ",
-        className
-      )} 
-      {...props}
-    >
-      <div className="relative flex max-w-[vw] overflow-hidden py-5">
-        <div 
-          className={cn(
-            "flex w-max animate-marquee",
-            pauseOnHover && "hover:[animation-play-state:paused]",
-            direction === "right" && "animate-marquee-reverse"
-          )}
-          style={{ "--duration": `${speed}s` } as React.CSSProperties}
-        >
-          {children}
-          {children}
-        </div>
-      </div>
-    </div>
+    // @ts-ignore
+    <Cloud {...cloudProps}>
+      <>{renderedIcons}</>
+    </Cloud>
   )
 }

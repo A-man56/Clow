@@ -5,19 +5,19 @@ import { CompareDemo } from '../components/CompareDemo';
 import BusinessFeatures from '../components/BusinessFeatures';
 import ThreeStepPlan from '../components/ThreeStepPlan';
 import HeroSection from '../components/HeroSection';
+import GoogleGeminiEffectDemo from '../components/googscr';
 import Testimonial from '../components/Testimonial';
-import {MarqueeDemo} from '../components/slidermarquee';
-import { FloatingDock } from '../components/floatingdock';
 import Footer from '../components/Footer';
 import GridBackground from "../components/GridBackground";
-import { BackgroundBeamsWithCollision } from "../components/background-beams-with-collision";
+import { PixelTrailDemo } from "../components/homeDebounce";
+// import { BackgroundBeamsWithCollision } from "../components/background-beams-with-collision";
 
 export default function Home() {
   return (
     <div className="font-poppins min-h-screen relative overflow-hidden">
       {/* Animated Background */}
-      <BackgroundBeamsWithCollision className="absolute" />
-      <GridBackground />
+      {/* <BackgroundBeamsWithCollision className="absolute" /> */}
+      {/* <PixelTrailDemo /> */}  
 
       {/* Navbar */}
       <Navbar />
@@ -30,9 +30,12 @@ export default function Home() {
       <div className="relative z-10 mt-16">
         <CompareDemo />
       </div> {/* ✅ Added missing closing </div> */}
+      <div className="relative z-10 mt-16">
+      <GoogleGeminiEffectDemo/>
+      </div>
 
       <div className="relative z-10 mt-16">
-        <MarqueeDemo />
+        
       </div>
 
       <div className="relative z-10 mt-16">
